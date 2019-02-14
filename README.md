@@ -1,1 +1,2 @@
-# CPP-Small-Projects
+# CPP Small Projects
+* Small projects using C++ programming language.
