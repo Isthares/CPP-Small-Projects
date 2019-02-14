@@ -1,2 +1,3 @@
 # CPP Small Projects
-* Small projects using C++ programming language.
+* Small projects using C++ programming language:
+  - Personalized Calculator
