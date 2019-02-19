@@ -3,5 +3,4 @@
 * The user can:
   - Add Records: student's name, student's id, and course
   - List Records: list all records
-  - Modify Records: modify added records
   - Delete Records: delete added student's information
