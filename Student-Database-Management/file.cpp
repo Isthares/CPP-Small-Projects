@@ -20,6 +20,7 @@ void File::addRecords() {
     //- open the file 
     dataFile.open("studentDBFile.txt", ios::app); //ios::app >> All output operations are performed at the end of the file, 
     											  //			appending the content to the current content of the file
+    dataFile.clear(); //sets a new value for the stream's internal error state flags
     //- check if the file is in failed state
     if (dataFile.fail()) {
     	cout << "Error opening studentDBFile.txt." << endl;
@@ -120,8 +121,8 @@ void File::listRecords() {
 	Menu m;
 
 	//open file
-	dataFile.open("studentDBFile.txt", ios::in);
-	
+	dataFile.open("studentDBFile.txt");
+	dataFile.clear(); //sets a new value for the stream's internal error state flags
 	//check if the file exist
 	if(!dataFile) {
 		cout << endl;
@@ -171,7 +172,7 @@ bool File::isIDInFile(string studentID) {
 
 	//open data file
 	dataFile.open("studentDBFile.txt", ios::in);
-	
+	dataFile.clear(); //sets a new value for the stream's internal error state flags
 	if (dataFile.fail()) {
     	cout << "           isIDInFile: Error opening studentDBFile.txt." << endl;
     }
@@ -201,52 +202,55 @@ bool File::isIDInFile(string studentID) {
 void File::deleteValidRecord (string studentID) {
 	Menu m;
 	fstream tmp;
-	string line = ""; 
-	string currentStudentID = "";
-	int pos = 0;
-	string delimiter = "**";
 
 	//open the file 
 	dataFile.open("studentDBFile.txt");
-	
-    tmp.open("temporal.txt", ios::out);
-    
+	dataFile.clear(); //sets a new value for the stream's internal error state flags
     //check if the file is in failed state
-    if (tmp.fail()) {
-    	cout << endl << "           Error opening temporal.txt." << endl << endl;
-    }
-    else if (dataFile.fail()) {
+    if (!dataFile) {
     	cout << endl << "           deleteValidRecord: Error opening studentDBFile.txt." << endl << endl;
-    	//close the file
-	    tmp.close();
     }
     else {
-    	dataFile.seekg (0, ios::beg); //put the "cursor" at the beginning of the file
-    	tmp.seekg (0, ios::beg); //put the "cursor" at the beginning of the file
-    	while (getline(dataFile, line)) { 
-    		//cout << line << endl;
-    		pos = line.find(delimiter);
-			currentStudentID = line.substr(0, pos);
-			//cout << currentStudentID << ", " << studentID << endl;
-			if (studentID.compare(currentStudentID) != 0) {
-				tmp << line << endl;
-				cout << "line to write in tmp: " << line << endl;
-			}
-			pos = 0;
-			getchar();
-   		}
+    	tmp.open("temporal.txt", ios::out);
+    	tmp.clear(); //sets a new value for the stream's internal error state flags
+    	if (!tmp) {
+	    	cout << endl << "           deleteValidRecord: Error opening temporal.txt." << endl << endl;
+	    	//close the file
+		    dataFile.close();
+	    }
+	    else {
+	    	
+	    	dataFile.seekg (0, ios::beg); //put the "cursor" at the beginning of the file
+	    	tmp.seekg (0, ios::beg); //put the "cursor" at the beginning of the file
 
-    	m.deletedRecordMessage (studentID);
+	    	string line = ""; 
+			string currentStudentID = "";
+			int pos = 0;
+			string delimiter = "**";
 
-    	//close the file
-	    tmp.close();
+	    	while (getline(dataFile, line)) { 
+	    		//cout << line << endl;
+	    		pos = line.find(delimiter);
+				currentStudentID = line.substr(0, pos);
+				//cout << currentStudentID << ", " << studentID << endl;
+				if (studentID.compare(currentStudentID) != 0) {
+					tmp << line << endl;
+					cout << "line to write in tmp: " << line << endl;
+				}
+	   		}
 
-	    //close the file
-		dataFile.close();
+	    	m.deletedRecordMessage (studentID);
 
-		remove("studentDBFile.txt");
-		rename("temporal.txt","studentDBFile.txt");
-    }
+	    	//close the file
+		    tmp.close();
+
+		    //close the file
+			dataFile.close();
+
+			remove("studentDBFile.txt");
+			rename("temporal.txt","studentDBFile.txt");
+	    }
+    }   
 }
 
 //Delete Records
