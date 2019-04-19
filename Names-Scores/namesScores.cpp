@@ -153,6 +153,6 @@ int main () {
 	namesVector = initializeVectorWithNames("names.txt", namesVector);
 	//sorting the vector into alphabetical order
 	sort(namesVector.begin(), namesVector.end()); 
-	
+	//28 = '*' + 26 letters + '\0'
 	totalAllNamesScore(alphabetArray, 28, namesVector);
 }
